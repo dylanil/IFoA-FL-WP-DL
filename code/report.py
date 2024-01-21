@@ -194,15 +194,17 @@ def plot_learning_curves(loss_stats, train_or_val):
             ax.set_title('Learning curves ' +  str(ag_id) + ' : ' + train_or_val + ' dataset')
 
         if ag_id == -1:
-            x = range(1, EPOCHS_LOCAL_GLOBAL + 1)
-            y = json.loads(loss_stats[ag_id][0][train_or_val])
-            plt.plot(x, y, label = "global model" , linestyle="-")
+            #x = range(1, 10 + 1)
+            #y = json.loads(loss_stats[ag_id][1][train_or_val])
+            #plt.plot(x, y, label = "global model" , linestyle="-")
+            pass
         else:
             x = range(1, EPOCHS + 1)   
-            for rnd_no in range(1, NUM_ROUNDS): # FIXED : TO_FIX !!!!!!!!    MS: -1 added temporarly!!!! I need to find out why some clients join from 2nd round ( ask Malgorzata if that is not clear :) 
-                print('ag_id ', ag_id, 'rnd_no ', rnd_no)
-                y = json.loads(loss_stats[ag_id][rnd_no][train_or_val])
-                plt.plot(x, y, label = "round_" + str(rnd_no + 1) , linestyle="-")
+            for rnd_no in range(0, NUM_ROUNDS*2 +1):
+                if rnd_no % 2 != 0: # FIXED : TO_FIX !!!!!!!!    MS: -1 added temporarly!!!! I need to find out why some clients join from 2nd round ( ask Malgorzata if that is not clear :) 
+                    print('ag_id ', ag_id, 'rnd_no ', rnd_no)
+                    y = json.loads(loss_stats[ag_id][rnd_no][train_or_val])
+                    plt.plot(x, y, label = "round_" + str(rnd_no + 1) , linestyle="-")
 
         plt.legend()
         plot_name = '../plots/Learning curves agent_id ' + str(ag_id) + train_or_val + '.png'
@@ -236,12 +238,12 @@ def construct():
         model_global.eval()
 
         AGENT_PATH =  f'../ag_{ag}/local_model.pt'
-        model_partial = architecture.MultipleRegression(num_features=39, num_units_1=60, num_units_2=20)  #architecture.NeuralNetworks(NUM_FEATURES)
+        model_partial = architecture.MultipleRegression(num_features=39, num_units_1=20, num_units_2=100)  #architecture.NeuralNetworks(NUM_FEATURES)
         model_partial.load_state_dict(torch.load(AGENT_PATH))
         model_partial.eval()
 
         AGENT_PATH = f'../ag_{ag}/fl_model.pt'
-        model_fl = architecture.MultipleRegression(num_features=39, num_units_1=60, num_units_2=20) #architecture.NeuralNetworks(NUM_FEATURES)
+        model_fl = architecture.MultipleRegression(num_features=39, num_units_1=20, num_units_2=100) #architecture.NeuralNetworks(NUM_FEATURES)
         model_fl.load_state_dict(torch.load(AGENT_PATH))
         model_fl.eval()
 
@@ -373,21 +375,23 @@ def test_statistics(model, y_test, ag_no):
 for ag_no in range(-2, NUM_AGENTS):
 
     if ag_no ==-1:
-        AGENT_PATH = '../ag_global/global_model.pt' 
+        #AGENT_PATH = '../ag_global/global_model.pt' 
+        pass
     elif ag_no ==-2:
-        model_name = 'fl_model.pt'
-        AGENT_PATH = '../ag_0/fl_model.pt'
+        #model_name = 'fl_model.pt'
+        #AGENT_PATH = '../ag_0/fl_model.pt'
+        pass
     else:
         model_name = 'local_model.pt'
         AGENT_PATH = '../ag_' + str(ag_no) + '/' + model_name 
     
 
-    model = architecture.MultipleRegression(num_features=39, num_units_1=60, num_units_2=20) # 2 layer NN, new architecture used in Optuna tuning
+    model = architecture.MultipleRegression(num_features=39, num_units_1=20, num_units_2=100) # 2 layer NN, new architecture used in Optuna tuning
 
 
-    model.load_state_dict(torch.load(AGENT_PATH))
-    model.eval()
-    test_statistics(model, y_te, ag_no)   
+    #model.load_state_dict(torch.load(AGENT_PATH))
+    #model.eval()
+    #test_statistics(model, y_te, ag_no)   
 
 
 plots_on_page = construct()

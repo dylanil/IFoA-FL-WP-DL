@@ -13,10 +13,13 @@ from sklearn.model_selection import train_test_split
 import flwr as fl 
 from typing import Dict, List, Tuple
 from collections import OrderedDict
+import argparse
+import run_config
 
 
+# Define architecture (OPTUNA ARCHITECTURE)
 class MultipleRegression(nn.Module):
-    def __init__(self, num_features=39, num_units_1=60, num_units_2=20, activation=nn.Tanh, dropout_rate=0):
+    def __init__(self, num_features=39, num_units_1=10, num_units_2=15, activation=nn.Tanh, dropout_rate=0):
         super(MultipleRegression, self).__init__()
         
         self.layer_1 = nn.Linear(num_features, num_units_1)
@@ -46,6 +49,3 @@ class MultipleRegression(nn.Module):
         x = torch.exp(self.layer_out(x))
 
         return (x)
-
-def get_parameters(model) -> List[np.ndarray]:
-    return [val.cpu().numpy() for _, val in model.state_dict().items()]
